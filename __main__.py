@@ -90,7 +90,7 @@ async def main():
                         continue
                     await connection.execute(
                         f"UPDATE devices "
-                        f"SET uptime = $1, wired_bytes = $2, wireless_bytes = $3 "
+                        f"SET uptime = $1, wired_bytes = $2, wireless_bytes = $3, last_seen = NOW()"
                         f"WHERE label = $4",
                         response["uptime"],
                         response["wired"],
