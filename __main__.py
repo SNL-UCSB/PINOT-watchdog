@@ -78,30 +78,31 @@ async def main():
         database=PG_DB,
     )
 
-    try:
-        async with http_client as client:
-            data = await retrieve_data(client)
-            logging.info(f"Retrieved data for {len(data)} nodes")
+    while True:
+        try:
+            async with http_client as client:
+                data = await retrieve_data(client)
+                logging.info(f"Retrieved data for {len(data)} nodes")
 
-        async with db_connection_pool.acquire() as connection:
-            for node, response in data.items():
-                if not response:
-                    continue
-                await connection.execute(
-                    f"UPDATE devices "
-                    f"SET uptime = $1, wired_bytes = $2, wireless_bytes = $3 "
-                    f"WHERE label = $4",
-                    response["uptime"],
-                    response["wired"],
-                    response["wireless"],
-                    node,
-                )
-        logging.info("Updated information in the database")
-    except Exception as e:
-        logging.exception(e)
+            async with db_connection_pool.acquire() as connection:
+                for node, response in data.items():
+                    if not response:
+                        continue
+                    await connection.execute(
+                        f"UPDATE devices "
+                        f"SET uptime = $1, wired_bytes = $2, wireless_bytes = $3 "
+                        f"WHERE label = $4",
+                        response["uptime"],
+                        response["wired"],
+                        response["wireless"],
+                        node,
+                    )
+            logging.info("Updated information in the database")
+        except Exception as e:
+            logging.exception(e)
 
-    logging.info(f"Sleeping for {SLEEP_TIME} seconds")
-    await asyncio.sleep(SLEEP_TIME)
+        logging.info(f"Sleeping for {SLEEP_TIME} seconds")
+        await asyncio.sleep(SLEEP_TIME)
 
 if __name__ == '__main__':
     asyncio.run(main())
