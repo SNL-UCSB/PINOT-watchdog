@@ -70,7 +70,6 @@ async def retrieve_data(client: aiohttp.ClientSession) -> dict[str, SaltResponse
 
 
 async def main():
-    http_client = aiohttp.ClientSession(headers={"Accept": "application/json"})
     db_connection_pool = await asyncpg.create_pool(
         host=PG_HOST,
         user=PG_USER,
@@ -80,7 +79,7 @@ async def main():
 
     while True:
         try:
-            async with http_client as client:
+            async with aiohttp.ClientSession(headers={"Accept": "application/json"}) as client:
                 data = await retrieve_data(client)
                 logging.info(f"Retrieved data for {len(data)} nodes")
 
