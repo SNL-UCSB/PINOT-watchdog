@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 INTERFACES_WIRED = {"eth0", "enp1s0"}
 INTERFACES_WIRELESS = {"wlan0"}
-SLEEP_TIME = 60 * 60
+SLEEP_TIME = int(os.environ.get('SLEEP_TIME', 60 * 60))
 
 SALT_API_URL = os.environ['SALT_API_URL']
 SALT_API_USER = os.environ['SALT_API_USER']
